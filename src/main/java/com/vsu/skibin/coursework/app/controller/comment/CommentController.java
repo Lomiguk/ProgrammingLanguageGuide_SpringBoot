@@ -5,6 +5,7 @@ import com.vsu.skibin.coursework.app.api.data.request.comment.AddCommentRequest;
 import com.vsu.skibin.coursework.app.api.data.request.comment.UpdateCommentRequest;
 import com.vsu.skibin.coursework.app.service.CommentService;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,8 @@ public class CommentController {
     }
 
     @GetMapping(value = {"","/"})
-    public Collection<CommentDTO> getComments(@PathVariable("articleId") Long articleId){
-        return null;
+    public Collection<CommentDTO> getComments(@PathVariable("articleId") Long articleId, @PathParam("limit") Integer limit, @PathParam("offset") Integer offset){
+        return commentService.getComments(articleId, limit, offset);
     }
     @GetMapping("/{commentId}")
     public CommentDTO getComment(@PathVariable("articleId") Long articleId, @PathVariable("commentId") Long commentId){

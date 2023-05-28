@@ -8,9 +8,12 @@ import com.vsu.skibin.coursework.app.repository.dao.CommentDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 @Service
 public class CommentService {
-    private CommentDAO commentDAO;
+    private final CommentDAO commentDAO;
     @Autowired
     public CommentService(CommentDAO commentDAO) {
         this.commentDAO = commentDAO;
@@ -18,6 +21,14 @@ public class CommentService {
     public CommentDTO getComment(Long articleId, Long commentId) {
         Comment comment = commentDAO.getComment(articleId, commentId);
         return new CommentDTO(comment);
+    }
+    public Collection<CommentDTO> getComments(Long articleId, Integer limit, Integer offset) {
+        Collection<Comment> comments = commentDAO.getComments(articleId, limit, offset);
+        Collection<CommentDTO> resultComments = new ArrayList<>();
+        for (Comment comment: comments) {
+            resultComments.add(new CommentDTO(comment));
+        }
+        return resultComments;
     }
     public int addComment(Long articleId, AddCommentRequest request){
         return commentDAO.insertComment(articleId, request);
@@ -29,4 +40,6 @@ public class CommentService {
     public int deleteComment(Long articleId, Long commentId) {
         return commentDAO.deleteComment(articleId, commentId);
     }
+
+
 }

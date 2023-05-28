@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 @Component
 @Repository
 public class CommentDAO {
@@ -16,7 +18,8 @@ public class CommentDAO {
     private String INSERT_COMMENT_QUERY = "INSERT INTO comment (author_id, article_id, content, post_date) VALUES (?, ?, ?, ?)";
     private String PATCH_COMMENT_QUERY = "UPDATE comment SET content = ? WHERE id = ? AND article_id = ?;";
     private String DELETE_COMMENT_QUERY = "DELETE FROM comment WHERE id = ? AND article_id = ?;";
-    private JdbcTemplate jdbcTemplate;
+    private String GET_COMMENTS_BY_ARTICLE_QUERY = "SELECT * FROM comment WHERE article_id = ? ORDER BY post_date LIMIT ? OFFSET ?;";
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public CommentDAO(JdbcTemplate jdbcTemplate) {
@@ -43,5 +46,9 @@ public class CommentDAO {
 
     public int deleteComment(Long articleId, Long commentId) {
         return jdbcTemplate.update(DELETE_COMMENT_QUERY, commentId, articleId);
+    }
+
+    public Collection<Comment> getComments(Long articleId, Integer limit, Integer offset) {
+        return jdbcTemplate.query(GET_COMMENTS_BY_ARTICLE_QUERY, new CommentRowMapper(), articleId, limit, offset);
     }
 }

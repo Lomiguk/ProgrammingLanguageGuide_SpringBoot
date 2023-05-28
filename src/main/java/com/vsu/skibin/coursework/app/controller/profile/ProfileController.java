@@ -42,7 +42,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}/subscription")
-    public Collection<ProfileDTO> getSubscribe(@PathVariable("id") Long profileId) {
+    public Collection<ProfileDTO> getSubscription(@PathVariable("id") Long profileId) {
         return profileService.getSubscribes(profileId);
     }
 
