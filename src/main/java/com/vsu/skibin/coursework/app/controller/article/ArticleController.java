@@ -2,6 +2,7 @@ package com.vsu.skibin.coursework.app.controller.article;
 
 import com.vsu.skibin.coursework.app.api.data.dto.ArticleDTO;
 import com.vsu.skibin.coursework.app.api.data.request.article.AddArticleRequest;
+import com.vsu.skibin.coursework.app.api.data.request.article.GetSubscribedArticleRequest;
 import com.vsu.skibin.coursework.app.api.data.request.article.PatchArticleRequest;
 import com.vsu.skibin.coursework.app.exception.article.UnknownArticleException;
 import com.vsu.skibin.coursework.app.service.ArticleService;
@@ -24,6 +25,13 @@ public class ArticleController {
     @GetMapping("/")
     public Collection<ArticleDTO> getAllArticlesWithPagination(@RequestParam Integer limit, @RequestParam Integer offset){
         return articleService.getAllArticlesWithPagination(limit, offset);
+    }
+
+    @GetMapping()
+    public Collection<ArticleDTO> getSubscribedArticlesWithPagination(@RequestBody GetSubscribedArticleRequest request,
+                                                                      @RequestParam Integer limit,
+                                                                      @RequestParam Integer offset){
+        return articleService.getSubscribedArticlesWithPagination(request, limit, offset);
     }
 
     @GetMapping("/{id}")

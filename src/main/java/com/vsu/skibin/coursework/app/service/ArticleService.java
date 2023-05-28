@@ -1,6 +1,7 @@
 package com.vsu.skibin.coursework.app.service;
 
 import com.vsu.skibin.coursework.app.api.data.dto.ArticleDTO;
+import com.vsu.skibin.coursework.app.api.data.request.article.GetSubscribedArticleRequest;
 import com.vsu.skibin.coursework.app.entity.Article;
 import com.vsu.skibin.coursework.app.repository.dao.ArticleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,20 @@ public class ArticleService {
     }
 
     public Collection<ArticleDTO> getAllArticlesWithPagination(Integer limit, Integer offset) {
-        Collection<Article> articles = articleDAO.getAllArticleWithPagination(limit, offset);
+        return transformCollectionEntityToDTO(articleDAO.getAllArticlesWithPagination(limit, offset));
+    }
+
+    public Collection<ArticleDTO> getSubscribedArticlesWithPagination(GetSubscribedArticleRequest request,
+                                                                      Integer limit,
+                                                                      Integer offset) {
+        return transformCollectionEntityToDTO(articleDAO.getSubscribedArticlesWithPagination(request.getSubscriberId(),
+                limit,
+                offset));
+    }
+
+    private Collection<ArticleDTO> transformCollectionEntityToDTO(Collection<Article> articles) {
         Collection<ArticleDTO> resultDTO = new ArrayList<>();
-        for (Article article: articles) {
+        for (Article article : articles) {
             resultDTO.add(new ArticleDTO(article));
         }
         return resultDTO;

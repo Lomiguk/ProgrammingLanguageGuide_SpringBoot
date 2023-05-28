@@ -19,6 +19,7 @@ public class ArticleDAO {
     private final String DELETE_ARTICLE_QUERY = "DELETE FROM article WHERE id = ?;";
     private final String INC_COUNT_QUERY = "UPDATE article SET read_count = read_count + 1 WHERE id = ?;";
     private final String GET_ALL_ARTICLE_WITH_PAGINATION = "SELECT * FROM article ORDER BY post_date LIMIT ? OFFSET ?;";
+    private final String GET_SUBSCRIBED_ARTICLE_WITH_PAGINATION = "SELECT * FROM article AS A JOIN subscribe AS S ON A.author_id = S.author_id WHERE S.subscriber_id = ? ORDER BY post_date LIMIT ? OFFSET ?;";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -37,14 +38,22 @@ public class ArticleDAO {
     public int updateArticle(Long id, String tittle, String content) {
         return jdbcTemplate.update(UPDATE_ARTICLE_QUERY, tittle, content, id);
     }
+
     public int deleteArticle(Long id) {
         return jdbcTemplate.update(DELETE_ARTICLE_QUERY, id);
     }
+
     public int incReadCount(Long id) {
         return jdbcTemplate.update(INC_COUNT_QUERY, id);
     }
 
-    public Collection<Article> getAllArticleWithPagination(Integer limit, Integer offset) {
+    public Collection<Article> getAllArticlesWithPagination(Integer limit, Integer offset) {
         return jdbcTemplate.query(GET_ALL_ARTICLE_WITH_PAGINATION, new ArticleRowMapper(), limit, offset);
+    }
+
+    public Collection<Article> getSubscribedArticlesWithPagination(Long subscriberId, Integer limit, Integer offset) {
+        return jdbcTemplate.query(GET_SUBSCRIBED_ARTICLE_WITH_PAGINATION,
+                new ArticleRowMapper(),
+                subscriberId, limit, offset);
     }
 }
