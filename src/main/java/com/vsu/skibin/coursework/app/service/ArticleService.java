@@ -1,11 +1,14 @@
 package com.vsu.skibin.coursework.app.service;
 
 import com.vsu.skibin.coursework.app.api.data.dto.ArticleDTO;
+import com.vsu.skibin.coursework.app.entity.Article;
 import com.vsu.skibin.coursework.app.repository.dao.ArticleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Service
 public class ArticleService {
@@ -34,5 +37,14 @@ public class ArticleService {
 
     public int incReadCount(Long id) {
         return articleDAO.incReadCount(id);
+    }
+
+    public Collection<ArticleDTO> getAllArticlesWithPagination(Integer limit, Integer offset) {
+        Collection<Article> articles = articleDAO.getAllArticleWithPagination(limit, offset);
+        Collection<ArticleDTO> resultDTO = new ArrayList<>();
+        for (Article article: articles) {
+            resultDTO.add(new ArticleDTO(article));
+        }
+        return resultDTO;
     }
 }

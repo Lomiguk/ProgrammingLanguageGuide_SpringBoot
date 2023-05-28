@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 
 @Component
 @Repository
@@ -17,6 +18,7 @@ public class ArticleDAO {
     private final String UPDATE_ARTICLE_QUERY = "UPDATE article SET title = ?, content = ? WHERE id = ?;";
     private final String DELETE_ARTICLE_QUERY = "DELETE FROM article WHERE id = ?;";
     private final String INC_COUNT_QUERY = "UPDATE article SET read_count = read_count + 1 WHERE id = ?;";
+    private final String GET_ALL_ARTICLE_WITH_PAGINATION = "SELECT * FROM article ORDER BY post_date LIMIT ? OFFSET ?;";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -40,5 +42,9 @@ public class ArticleDAO {
     }
     public int incReadCount(Long id) {
         return jdbcTemplate.update(INC_COUNT_QUERY, id);
+    }
+
+    public Collection<Article> getAllArticleWithPagination(Integer limit, Integer offset) {
+        return jdbcTemplate.query(GET_ALL_ARTICLE_WITH_PAGINATION, new ArticleRowMapper(), limit, offset);
     }
 }
