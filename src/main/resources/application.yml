@@ -1,0 +1,14 @@
+server:
+  port: 8081
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    view:
+      prefix: /WEB-INF/
+      suffix: .jsp
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ProgLangGuide
+    username: Lomi
+    password: l0m1
