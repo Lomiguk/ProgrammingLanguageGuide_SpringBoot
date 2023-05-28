@@ -41,15 +41,15 @@ public class ArticleService {
     }
 
     public Collection<ArticleDTO> getAllArticlesWithPagination(Integer limit, Integer offset) {
-        return transformCollectionEntityToDTO(articleDAO.getAllArticlesWithPagination(limit, offset));
+        return transformCollectionEntityToDTO(articleDAO
+                .getAllArticlesWithPagination(limit, offset));
     }
 
-    public Collection<ArticleDTO> getSubscribedArticlesWithPagination(GetSubscribedArticleRequest request,
-                                                                      Integer limit,
-                                                                      Integer offset) {
-        return transformCollectionEntityToDTO(articleDAO.getSubscribedArticlesWithPagination(request.getSubscriberId(),
-                limit,
-                offset));
+    public Collection<ArticleDTO> getSubscriptionsArticlesWithPagination(GetSubscribedArticleRequest request,
+                                                                         Integer limit,
+                                                                         Integer offset) {
+        return transformCollectionEntityToDTO(articleDAO
+                .getSubscriptionsArticlesWithPagination(request.getSubscriberId(), limit, offset));
     }
 
     private Collection<ArticleDTO> transformCollectionEntityToDTO(Collection<Article> articles) {

@@ -51,7 +51,7 @@ public class ArticleDAO {
         return jdbcTemplate.query(GET_ALL_ARTICLE_WITH_PAGINATION, new ArticleRowMapper(), limit, offset);
     }
 
-    public Collection<Article> getSubscribedArticlesWithPagination(Long subscriberId, Integer limit, Integer offset) {
+    public Collection<Article> getSubscriptionsArticlesWithPagination(Long subscriberId, Integer limit, Integer offset) {
         return jdbcTemplate.query(GET_SUBSCRIBED_ARTICLE_WITH_PAGINATION,
                 new ArticleRowMapper(),
                 subscriberId, limit, offset);

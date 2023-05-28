@@ -28,10 +28,10 @@ public class ArticleController {
     }
 
     @GetMapping()
-    public Collection<ArticleDTO> getSubscribedArticlesWithPagination(@RequestBody GetSubscribedArticleRequest request,
-                                                                      @RequestParam Integer limit,
-                                                                      @RequestParam Integer offset){
-        return articleService.getSubscribedArticlesWithPagination(request, limit, offset);
+    public Collection<ArticleDTO> getSubscriptionsArticlesWithPagination(@RequestBody GetSubscribedArticleRequest request,
+                                                                         @RequestParam Integer limit,
+                                                                         @RequestParam Integer offset){
+        return articleService.getSubscriptionsArticlesWithPagination(request, limit, offset);
     }
 
     @GetMapping("/{id}")
