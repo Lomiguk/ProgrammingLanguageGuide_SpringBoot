@@ -20,6 +20,7 @@ public class ArticleDAO {
     private final String INC_COUNT_QUERY = "UPDATE article SET read_count = read_count + 1 WHERE id = ?;";
     private final String GET_ALL_ARTICLE_WITH_PAGINATION = "SELECT * FROM article ORDER BY post_date LIMIT ? OFFSET ?;";
     private final String GET_SUBSCRIBED_ARTICLE_WITH_PAGINATION = "SELECT * FROM article AS A JOIN subscribe AS S ON A.author_id = S.author_id WHERE S.subscriber_id = ? ORDER BY post_date LIMIT ? OFFSET ?;";
+    private final String GET_ARTICLES_BY_TAG_ID = "SELECT A.* FROM article AS A JOIN article_tag AS AT ON A.id = AT.article_id WHERE AT.tag_id = ?;";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -55,5 +56,9 @@ public class ArticleDAO {
         return jdbcTemplate.query(GET_SUBSCRIBED_ARTICLE_WITH_PAGINATION,
                 new ArticleRowMapper(),
                 subscriberId, limit, offset);
+    }
+
+    public Collection<Article> getArticlesByTagId(Long id) {
+        return jdbcTemplate.query(GET_ARTICLES_BY_TAG_ID, new ArticleRowMapper(), id);
     }
 }

@@ -4,8 +4,10 @@ import com.vsu.skibin.coursework.app.api.data.dto.ArticleDTO;
 import com.vsu.skibin.coursework.app.api.data.request.article.GetSubscribedArticleRequest;
 import com.vsu.skibin.coursework.app.entity.Article;
 import com.vsu.skibin.coursework.app.repository.dao.ArticleDAO;
+import com.vsu.skibin.coursework.app.repository.dao.TagDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -14,10 +16,12 @@ import java.util.Collection;
 @Service
 public class ArticleService {
     private final ArticleDAO articleDAO;
+    private final TagDAO tagDAO;
 
     @Autowired
-    public ArticleService(ArticleDAO articleDAO) {
+    public ArticleService(ArticleDAO articleDAO, TagDAO tagDAO) {
         this.articleDAO = articleDAO;
+        this.tagDAO = tagDAO;
     }
 
     public ArticleDTO getArticle(Long id) {
@@ -58,5 +62,15 @@ public class ArticleService {
             resultDTO.add(new ArticleDTO(article));
         }
         return resultDTO;
+    }
+
+    public Collection<ArticleDTO> getArticlesByTagId(Long id) {
+        return transformCollectionEntityToDTO(articleDAO.getArticlesByTagId(id));
+    }
+
+    @Transactional
+    public Collection<ArticleDTO> getArticlesByTagTitle(String title) {
+        Long id = tagDAO.getIdByTitle(title);
+        return transformCollectionEntityToDTO(articleDAO.getArticlesByTagId(id));
     }
 }
