@@ -43,7 +43,14 @@ public class TagService {
     }
 
     public Collection<TagDTO> getTagFromArticle(Long articleId) {
-        Collection<Tag> tags = tagDAO.getTagFromArticle(articleId);
+        return transformCollectionTagEntityToDTO(tagDAO.getTagFromArticle(articleId));
+    }
+
+    public Collection<TagDTO> getAllTagsWithPagination(Integer limit, Integer offset) {
+        return transformCollectionTagEntityToDTO(tagDAO.getAllTagsWithPagination(limit, offset));
+    }
+
+    private Collection<TagDTO> transformCollectionTagEntityToDTO(Collection<Tag> tags) {
         Collection<TagDTO> tagDTOs = new ArrayList<>();
         for (Tag tag: tags) {
             tagDTOs.add(new TagDTO(tag));

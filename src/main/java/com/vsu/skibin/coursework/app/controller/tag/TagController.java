@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/tag")
 public class TagController {
@@ -18,6 +20,11 @@ public class TagController {
         this.tagService = tagService;
     }
 
+    @GetMapping(value = {"", "/"})
+    public Collection<TagDTO> getAllTagsWithPagination(@RequestParam("limit") Integer limit,
+                                                       @RequestParam("offset") Integer offset){
+        return tagService.getAllTagsWithPagination(limit, offset);
+    }
     @GetMapping("/{id}")
     public TagDTO getTagInfo(@PathVariable Long id) {
         return tagService.getTagInfo(id);
