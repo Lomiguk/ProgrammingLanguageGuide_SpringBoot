@@ -5,6 +5,7 @@ import com.vsu.skibin.coursework.app.api.data.request.profile.DoublePasswordRequ
 import com.vsu.skibin.coursework.app.api.data.request.profile.SignInRequest;
 import com.vsu.skibin.coursework.app.api.data.request.profile.SignUpRequest;
 import com.vsu.skibin.coursework.app.api.data.request.profile.UpdateProfileRequest;
+import com.vsu.skibin.coursework.app.exception.exception.profile.*;
 import com.vsu.skibin.coursework.app.service.ProfileService;
 import com.vsu.skibin.coursework.app.tool.PasswordUtil;
 import jakarta.validation.Valid;
@@ -33,12 +34,8 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    public ProfileDTO profiling(@PathVariable("id") Long profileId) {
-        ProfileDTO profileDTO = profileService.getProfile(profileId);
-        if (profileDTO == null){
-            throw new RuntimeException("Unknown profile");
-        }
-        return profileDTO;
+    public ProfileDTO profiling(@PathVariable("id") Long profileId) throws ReturnUnknownProfileException {
+        return profileService.getProfile(profileId);
     }
 
     @GetMapping("/{id}/subscription")
@@ -52,7 +49,7 @@ public class ProfileController {
     }
 
     @PostMapping("/sign_up")
-    public void signUp(@Valid @RequestBody SignUpRequest request) {
+    public void signUp(@Valid @RequestBody SignUpRequest request) throws SignUpException {
         profileService.signUp(request.getLogin(),
                 request.getEmail(),
                 request.getPassword(),
@@ -61,7 +58,7 @@ public class ProfileController {
 
     @PatchMapping("/{id}/password")
     public void changePassword(@PathVariable("id") Long profileId,
-                               @Valid @RequestBody DoublePasswordRequest passwordRequest) {
+                               @Valid @RequestBody DoublePasswordRequest passwordRequest) throws WrongOldPasswordException {
         profileService.changePassword(profileId, passwordRequest.getOldPassword(), passwordRequest.getNewPassword());
     }
 
@@ -77,12 +74,12 @@ public class ProfileController {
     }
 
     @PostMapping("/{id}/subscription")
-    public void subscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) {
+    public void subscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) throws WrongProfileId, SubscribeOnNonExistentProfile {
         profileService.subscribeToProfile(profileId, authorLogin);
     }
 
     @DeleteMapping("/{id}/subscription")
-    public void unsubscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) {
+    public void unsubscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) throws WrongProfileId, SubscribeOnNonExistentProfile {
         profileService.unsubscribeFromProfile(profileId, authorLogin);
     }
 }

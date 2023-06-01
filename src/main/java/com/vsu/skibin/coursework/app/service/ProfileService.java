@@ -3,10 +3,7 @@ package com.vsu.skibin.coursework.app.service;
 import com.vsu.skibin.coursework.app.api.data.dto.ProfileDTO;
 import com.vsu.skibin.coursework.app.api.data.request.profile.UpdateProfileRequest;
 import com.vsu.skibin.coursework.app.entity.Profile;
-import com.vsu.skibin.coursework.app.exception.profile.SignUpException;
-import com.vsu.skibin.coursework.app.exception.profile.SubscribeOnNonExistentProfile;
-import com.vsu.skibin.coursework.app.exception.profile.WrongOldPasswordException;
-import com.vsu.skibin.coursework.app.exception.profile.WrongProfileId;
+import com.vsu.skibin.coursework.app.exception.exception.profile.*;
 import com.vsu.skibin.coursework.app.repository.dao.ProfileDAO;
 import com.vsu.skibin.coursework.app.tool.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +28,7 @@ public class ProfileService {
         return new ProfileDTO(profileDAO.signIn(login, password));
     }
 
-    public void signUp(String login, String email, String password, String passwordRepeat) {
+    public void signUp(String login, String email, String password, String passwordRepeat) throws SignUpException {
         if (password.equals(passwordRepeat)) {
             profileDAO.signUp(login, email, PasswordUtil.getHash(password));
         } else {
@@ -48,12 +45,17 @@ public class ProfileService {
         return profileDTOs;
     }
 
-    public ProfileDTO getProfile(Long profileId) {
-        return new ProfileDTO(profileDAO.getProfile(profileId));
+    public ProfileDTO getProfile(Long profileId) throws ReturnUnknownProfileException {
+        try {
+            return new ProfileDTO(profileDAO.getProfile(profileId));
+        }
+        catch (EmptyResultDataAccessException e){
+            throw new ReturnUnknownProfileException("Unknown profile");
+        }
     }
 
     @Transactional
-    public void changePassword(Long profileId, String oldPassword, String newPassword) {
+    public void changePassword(Long profileId, String oldPassword, String newPassword) throws WrongOldPasswordException {
         if (profileDAO.checkPassword(profileId, PasswordUtil.getHash(oldPassword))) {
             profileDAO.changePassword(profileId, PasswordUtil.getHash(newPassword));
         } else {
@@ -68,7 +70,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public void subscribeToProfile(Long subscriberId, String authorLogin) {
+    public void subscribeToProfile(Long subscriberId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileId {
         try {
             Long authorId = profileDAO.getProfileId(authorLogin);
             profileDAO.subscribe(subscriberId, authorId);
@@ -80,7 +82,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public void unsubscribeFromProfile(Long profileId, String authorLogin) {
+    public void unsubscribeFromProfile(Long profileId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileId {
         try {
             Long authorId = profileDAO.getProfileId(authorLogin);
             profileDAO.unsubscribe(profileId, authorId);

@@ -1,7 +1,7 @@
 package com.vsu.skibin.coursework.app.repository.rowMapper;
 
 import com.vsu.skibin.coursework.app.entity.Profile;
-import com.vsu.skibin.coursework.app.exception.rowMapper.RowMapException;
+import com.vsu.skibin.coursework.app.exception.exception.rowMapper.RowMapException;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
