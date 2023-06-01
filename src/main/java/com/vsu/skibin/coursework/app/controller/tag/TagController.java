@@ -24,7 +24,7 @@ public class TagController {
     }
 
     @PostMapping(value = {"", "/"})
-    public int addTag(@RequestBody AddTagRequest request) {
+    public int addTag(@Valid @RequestBody AddTagRequest request) {
         return tagService.addTag(request);
     }
 
