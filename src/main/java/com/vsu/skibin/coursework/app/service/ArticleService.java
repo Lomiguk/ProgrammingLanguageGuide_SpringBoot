@@ -3,7 +3,9 @@ package com.vsu.skibin.coursework.app.service;
 import com.vsu.skibin.coursework.app.api.data.dto.ArticleDTO;
 import com.vsu.skibin.coursework.app.api.data.request.article.GetSubscribedArticleRequest;
 import com.vsu.skibin.coursework.app.entity.Article;
+import com.vsu.skibin.coursework.app.exception.article.NotAuthorException;
 import com.vsu.skibin.coursework.app.repository.dao.ArticleDAO;
+import com.vsu.skibin.coursework.app.repository.dao.ProfileDAO;
 import com.vsu.skibin.coursework.app.repository.dao.TagDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,19 +19,25 @@ import java.util.Collection;
 public class ArticleService {
     private final ArticleDAO articleDAO;
     private final TagDAO tagDAO;
+    private final ProfileDAO profileDAO;
 
     @Autowired
-    public ArticleService(ArticleDAO articleDAO, TagDAO tagDAO) {
+    public ArticleService(ArticleDAO articleDAO, TagDAO tagDAO, ProfileDAO profileDAO) {
         this.articleDAO = articleDAO;
         this.tagDAO = tagDAO;
+        this.profileDAO = profileDAO;
     }
 
     public ArticleDTO getArticle(Long id) {
         return new ArticleDTO(articleDAO.getArticle(id));
     }
 
-    public int addArticle(Long authorId, String title, Timestamp date, String content) {
-        return articleDAO.addArticle(authorId, title, date, content);
+    @Transactional
+    public int addArticle(Long authorId, String title, Timestamp date, String content) throws NotAuthorException {
+        if (profileDAO.isAuthor(authorId)){
+            return articleDAO.addArticle(authorId, title, date, content);
+        }
+        throw new NotAuthorException("Пользователь не является автором");
     }
 
     public int updateArticle(Long id, String tittle, String content) {
