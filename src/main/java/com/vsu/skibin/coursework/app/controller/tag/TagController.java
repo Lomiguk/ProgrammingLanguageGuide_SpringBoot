@@ -32,8 +32,8 @@ public class TagController {
     public int addTagToTheArticle(@PathVariable Long id, @RequestParam("articleId") Long articleId){
         return tagService.addTagToTheArticle(articleId, id);
     }
-    @DeleteMapping("/{id}")
-    public int removeTagFromTheArticle(@PathVariable Long id, @RequestParam("articleId") Long articleId){
+    @DeleteMapping("/{id}/article/{articleId}")
+    public int removeTagFromTheArticle(@PathVariable("id") Long id, @PathVariable("articleId") Long articleId){
         return tagService.removeTagFromTheArticle(articleId, id);
     }
 
