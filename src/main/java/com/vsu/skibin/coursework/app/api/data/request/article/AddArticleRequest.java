@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 public class AddArticleRequest {
     @NotNull
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 120)
     private String title;
     @NotNull
     private Timestamp date;
