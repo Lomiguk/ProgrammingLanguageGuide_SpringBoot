@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 public class SignInRequest {
-    @NotNull
-    @Size(min = 5, max = 15)
+    @NotNull(message = "Empty login")
+    @Size(min = 5, max = 15, message = "Login size (5 - 15)")
     private String login;
-    @NotNull
-    @Size(min = 5)
+    @NotNull(message = "Empty password")
+    @Size(min = 5, message = "Password size biggest then 5")
     private String password;
 }

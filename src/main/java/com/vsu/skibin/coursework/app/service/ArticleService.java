@@ -3,7 +3,7 @@ package com.vsu.skibin.coursework.app.service;
 import com.vsu.skibin.coursework.app.api.data.dto.ArticleDTO;
 import com.vsu.skibin.coursework.app.api.data.request.article.GetSubscribedArticleRequest;
 import com.vsu.skibin.coursework.app.entity.Article;
-import com.vsu.skibin.coursework.app.exception.article.NotAuthorException;
+import com.vsu.skibin.coursework.app.exception.exception.article.NotAuthorException;
 import com.vsu.skibin.coursework.app.repository.dao.ArticleDAO;
 import com.vsu.skibin.coursework.app.repository.dao.ProfileDAO;
 import com.vsu.skibin.coursework.app.repository.dao.TagDAO;
