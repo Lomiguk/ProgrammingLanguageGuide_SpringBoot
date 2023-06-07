@@ -70,26 +70,26 @@ public class ProfileService {
     }
 
     @Transactional
-    public void subscribeToProfile(Long subscriberId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileId {
+    public void subscribeToProfile(Long subscriberId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileIdException {
         try {
             Long authorId = profileDAO.getProfileId(authorLogin);
             profileDAO.subscribe(subscriberId, authorId);
         } catch (EmptyResultDataAccessException e) {
             throw new SubscribeOnNonExistentProfile("Trying to following a nun-existing profile");
         } catch (DataIntegrityViolationException e) {
-            throw new WrongProfileId("Wrong Subscriber id");
+            throw new WrongProfileIdException("Wrong Subscriber id");
         }
     }
 
     @Transactional
-    public void unsubscribeFromProfile(Long profileId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileId {
+    public void unsubscribeFromProfile(Long profileId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileIdException {
         try {
             Long authorId = profileDAO.getProfileId(authorLogin);
             profileDAO.unsubscribe(profileId, authorId);
         } catch (EmptyResultDataAccessException e) {
             throw new SubscribeOnNonExistentProfile("Trying to unfollowing a nun-existing profile");
         } catch (DataIntegrityViolationException e) {
-            throw new WrongProfileId("Wrong Unsubscriber id");
+            throw new WrongProfileIdException("Wrong Unsubscriber id");
         }
     }
 

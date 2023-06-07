@@ -74,12 +74,12 @@ public class ProfileController {
     }
 
     @PostMapping("/{id}/subscription")
-    public void subscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) throws WrongProfileId, SubscribeOnNonExistentProfile {
+    public void subscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) throws WrongProfileIdException, SubscribeOnNonExistentProfile {
         profileService.subscribeToProfile(profileId, authorLogin);
     }
 
     @DeleteMapping("/{id}/subscription")
-    public void unsubscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) throws WrongProfileId, SubscribeOnNonExistentProfile {
+    public void unsubscribe(@PathVariable("id") Long profileId, @RequestParam("author") String authorLogin) throws WrongProfileIdException, SubscribeOnNonExistentProfile {
         profileService.unsubscribeFromProfile(profileId, authorLogin);
     }
 }
