@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 public class UpdateProfileRequest {
-    @Size(min = 5, max = 15)
+    @Size(min = 5, max = 15, message = "login size 5 - 15")
     private String login;
-    @Email
+    @Email(message = "wrong email")
     private String email;
     private Boolean isAuthor;
-    @Size(min = 5)
+    @Size(min = 5, message = "min password size 5")
     private Long password;
 }

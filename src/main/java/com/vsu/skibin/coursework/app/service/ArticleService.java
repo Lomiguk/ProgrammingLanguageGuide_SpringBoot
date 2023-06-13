@@ -3,7 +3,10 @@ package com.vsu.skibin.coursework.app.service;
 import com.vsu.skibin.coursework.app.api.data.dto.ArticleDTO;
 import com.vsu.skibin.coursework.app.api.data.request.article.GetSubscribedArticleRequest;
 import com.vsu.skibin.coursework.app.entity.Article;
+import com.vsu.skibin.coursework.app.exception.exception.article.CouldNotFoundArticleException;
 import com.vsu.skibin.coursework.app.exception.exception.article.NotAuthorException;
+import com.vsu.skibin.coursework.app.exception.exception.article.UnknownArticleException;
+import com.vsu.skibin.coursework.app.exception.exception.global.WrongIdValueException;
 import com.vsu.skibin.coursework.app.repository.dao.ArticleDAO;
 import com.vsu.skibin.coursework.app.repository.dao.ProfileDAO;
 import com.vsu.skibin.coursework.app.repository.dao.TagDAO;
@@ -28,20 +31,38 @@ public class ArticleService {
         this.profileDAO = profileDAO;
     }
 
-    public ArticleDTO getArticle(Long id) {
-        return new ArticleDTO(articleDAO.getArticle(id));
+    public ArticleDTO getArticle(Long id) throws WrongIdValueException {
+        if (id < 0) {
+            throw new WrongIdValueException("Wrong id value");
+        }
+        Article article = articleDAO.getArticle(id);
+        if (article == null) {
+            throw new UnknownArticleException("Couldn't find the article");
+        }
+        return new ArticleDTO();
     }
 
     @Transactional
-    public int addArticle(Long authorId, String title, Timestamp date, String content) throws NotAuthorException {
-        if (profileDAO.isAuthor(authorId)){
-            return articleDAO.addArticle(authorId, title, date, content);
+    public ArticleDTO addArticle(Long authorId, String title, Timestamp date, String content) throws NotAuthorException, CouldNotFoundArticleException {
+        if (profileDAO.isAuthor(authorId)) {
+            articleDAO.addArticle(authorId, title, date, content);
+            Article article = articleDAO.getArticle(authorId, title, date);
+            if (article == null) {
+                throw new CouldNotFoundArticleException("Couldn't found created Article");
+            }
+            return new ArticleDTO(article);
         }
         throw new NotAuthorException("Пользователь не является автором");
     }
 
-    public int updateArticle(Long id, String tittle, String content) {
-        return articleDAO.updateArticle(id, tittle, content);
+    @Transactional
+    public ArticleDTO updateArticle(Long id, String tittle, String content) throws CouldNotFoundArticleException {
+        articleDAO.updateArticle(id, tittle, content);
+        Article article = articleDAO.getArticle(id);
+        if (article == null) {
+            throw new CouldNotFoundArticleException("Couldn't found created Article");
+        }
+        return new ArticleDTO(article);
     }
 
     public int deleteArticle(Long id) {

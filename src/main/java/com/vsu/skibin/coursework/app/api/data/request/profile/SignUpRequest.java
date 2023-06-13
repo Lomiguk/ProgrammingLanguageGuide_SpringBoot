@@ -8,14 +8,14 @@ import lombok.Data;
 @Data
 public class SignUpRequest {
     @NotNull
-    @Size(min = 5, max = 15)
+    @Size(min = 5, max = 15, message = "login size 5-15")
     private String login;
-    @Email
+    @Email(message = "wrong email")
     private String email;
     @NotNull
-    @Size(min = 5)
+    @Size(min = 5, message = "min password size - 5")
     private String password;
     @NotNull
-    @Size(min = 5)
+    @Size(min = 5, message = "min password size - 5")
     private String passwordRepeat;
 }

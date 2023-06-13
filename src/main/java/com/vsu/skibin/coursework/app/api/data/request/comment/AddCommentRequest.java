@@ -8,11 +8,11 @@ import java.sql.Timestamp;
 
 @Data
 public class AddCommentRequest {
-    @NotNull
+    @NotNull(message = "authorId can't be null")
     private Long authorId;
-    @NotNull
-    @NotBlank
+    @NotNull(message = "content can't be null")
+    @NotBlank(message = "content can't be blank")
     private String content;
-    @NotNull
+    @NotNull(message = "timestamp can't be null")
     private Timestamp timestamp;
 }

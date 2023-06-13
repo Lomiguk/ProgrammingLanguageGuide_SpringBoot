@@ -5,12 +5,16 @@ import com.vsu.skibin.coursework.app.api.data.dto.TagDTO;
 import com.vsu.skibin.coursework.app.api.data.request.article.AddArticleRequest;
 import com.vsu.skibin.coursework.app.api.data.request.article.GetSubscribedArticleRequest;
 import com.vsu.skibin.coursework.app.api.data.request.article.PatchArticleRequest;
+import com.vsu.skibin.coursework.app.exception.exception.article.CouldNotFoundArticleException;
 import com.vsu.skibin.coursework.app.exception.exception.article.NotAuthorException;
 import com.vsu.skibin.coursework.app.exception.exception.article.UnknownArticleException;
+import com.vsu.skibin.coursework.app.exception.exception.global.WrongIdValueException;
 import com.vsu.skibin.coursework.app.service.ArticleService;
 import com.vsu.skibin.coursework.app.service.TagService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -28,61 +32,61 @@ public class ArticleController {
     }
 
     @GetMapping("/")
-    public Collection<ArticleDTO> getAllArticlesWithPagination(@RequestParam Integer limit, @RequestParam Integer offset){
-        return articleService.getAllArticlesWithPagination(limit, offset);
+    public ResponseEntity<Collection<ArticleDTO>> getAllArticlesWithPagination(@RequestParam Integer limit, @RequestParam Integer offset) {
+        return new ResponseEntity<>(articleService.getAllArticlesWithPagination(limit, offset), HttpStatus.FOUND);
     }
 
     @GetMapping()
-    public Collection<ArticleDTO> getSubscriptionsArticlesWithPagination(@RequestBody GetSubscribedArticleRequest request,
-                                                                         @RequestParam Integer limit,
-                                                                         @RequestParam Integer offset){
-        return articleService.getSubscriptionsArticlesWithPagination(request, limit, offset);
+    public ResponseEntity<Collection<ArticleDTO>> getSubscriptionsArticlesWithPagination(@Valid @RequestBody GetSubscribedArticleRequest request,
+                                                                                         @RequestParam Integer limit,
+                                                                                         @RequestParam Integer offset) {
+        return new ResponseEntity<>(articleService.getSubscriptionsArticlesWithPagination(request, limit, offset), HttpStatus.FOUND);
     }
 
     @GetMapping("/tag/{tagId}")
-    public Collection<ArticleDTO> getArticlesByTagId(@PathVariable("tagId") Long id){
-        return articleService.getArticlesByTagId(id);
+    public ResponseEntity<Collection<ArticleDTO>> getArticlesByTagId(@PathVariable("tagId") Long id) {
+        return new ResponseEntity<>(articleService.getArticlesByTagId(id), HttpStatus.FOUND);
     }
 
     @GetMapping("/tag/{tagName}")
-    public Collection<ArticleDTO> getArticlesByTagName(@PathVariable("tagName") String name){
-        return articleService.getArticlesByTagTitle(name);
+    public ResponseEntity<Collection<ArticleDTO>> getArticlesByTagName(@PathVariable("tagName") String name) {
+        return new ResponseEntity<>(articleService.getArticlesByTagTitle(name), HttpStatus.FOUND);
     }
 
     @GetMapping("/{id}")
-    public ArticleDTO getArticle(@PathVariable Long id) {
+    public ResponseEntity<ArticleDTO> getArticle(@PathVariable Long id) throws WrongIdValueException {
         ArticleDTO articleDTO = articleService.getArticle(id);
-        if (articleDTO == null){
+        if (articleDTO == null) {
             throw new UnknownArticleException("Unknown article");
         }
-        return articleDTO;
+        return new ResponseEntity<>(articleDTO, HttpStatus.FOUND);
     }
 
     @GetMapping("/{id}/tag")
-    public Collection<TagDTO> getTagsFromArticle(@PathVariable("id") Long articleId){
-        return tagService.getTagFromArticle(articleId);
+    public ResponseEntity<Collection<TagDTO>> getTagsFromArticle(@PathVariable("id") Long articleId) {
+        return new ResponseEntity<>(tagService.getTagFromArticle(articleId), HttpStatus.FOUND);
     }
 
     @PostMapping("/{id}")
-    public int incReadCount(@PathVariable Long id) {
-        return articleService.incReadCount(id);
+    public ResponseEntity<Integer> incReadCount(@PathVariable Long id) {
+        return new ResponseEntity<>(articleService.incReadCount(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public int addArticle(@RequestParam Long authorId, @Valid @RequestBody AddArticleRequest articleRequest) throws NotAuthorException {
-        return articleService.addArticle(authorId,
+    public ResponseEntity<ArticleDTO> addArticle(@RequestParam Long authorId, @Valid @RequestBody AddArticleRequest articleRequest) throws NotAuthorException, CouldNotFoundArticleException {
+        return new ResponseEntity<>(articleService.addArticle(authorId,
                 articleRequest.getTitle(),
                 articleRequest.getDate(),
-                articleRequest.getContent());
+                articleRequest.getContent()), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public int editArticle(@PathVariable Long id, @Valid @RequestBody PatchArticleRequest patchArticle) {
-        return articleService.updateArticle(id, patchArticle.getTittle(), patchArticle.getContent());
+    public ResponseEntity<ArticleDTO> editArticle(@PathVariable Long id, @Valid @RequestBody PatchArticleRequest patchArticle) throws CouldNotFoundArticleException {
+        return new ResponseEntity<>(articleService.updateArticle(id, patchArticle.getTittle(), patchArticle.getContent()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public int deleteArticle(@PathVariable Long id) {
-        return articleService.deleteArticle(id);
+    public ResponseEntity<Object> deleteArticle(@PathVariable Long id) {
+        return new ResponseEntity<>(articleService.deleteArticle(id), HttpStatus.OK);
     }
 }

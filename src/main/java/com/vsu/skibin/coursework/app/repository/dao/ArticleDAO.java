@@ -21,6 +21,7 @@ public class ArticleDAO {
     private final String GET_ALL_ARTICLE_WITH_PAGINATION = "SELECT * FROM article ORDER BY post_date LIMIT ? OFFSET ?;";
     private final String GET_SUBSCRIBED_ARTICLE_WITH_PAGINATION = "SELECT * FROM article AS A JOIN subscribe AS S ON A.author_id = S.author_id WHERE S.subscriber_id = ? ORDER BY post_date LIMIT ? OFFSET ?;";
     private final String GET_ARTICLES_BY_TAG_ID = "SELECT A.* FROM article AS A JOIN article_tag AS AT ON A.id = AT.article_id WHERE AT.tag_id = ?;";
+    private final String GET_ARTICLE_BY_AUTHOR_TITLE_DATE = "SELECT * FROM article WHERE author_id = ? AND title = ? AND post_date = ?";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -32,12 +33,16 @@ public class ArticleDAO {
         return jdbcTemplate.query(GET_ARTICLE_QUERY, new ArticleRowMapper(), id).stream().findAny().orElse(null);
     }
 
-    public int addArticle(Long authorId, String title, Timestamp date, String content) {
-        return jdbcTemplate.update(ADD_ARTICLE_QUERY, authorId, title, date, content);
+    public Article getArticle(Long authorId, String title, Timestamp date) {
+        return jdbcTemplate.query(GET_ARTICLE_BY_AUTHOR_TITLE_DATE, new ArticleRowMapper(), authorId, title, date).stream().findAny().orElse(null);
     }
 
-    public int updateArticle(Long id, String tittle, String content) {
-        return jdbcTemplate.update(UPDATE_ARTICLE_QUERY, tittle, content, id);
+    public void addArticle(Long authorId, String title, Timestamp date, String content) {
+        jdbcTemplate.update(ADD_ARTICLE_QUERY, authorId, title, date, content);
+    }
+
+    public void updateArticle(Long id, String tittle, String content) {
+        jdbcTemplate.update(UPDATE_ARTICLE_QUERY, tittle, content, id);
     }
 
     public int deleteArticle(Long id) {

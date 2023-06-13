@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class UpdateCommentRequest {
     @NotNull
-    @NotBlank
+    @NotBlank(message = "can't be blank")
     private String content;
 }

@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class PatchArticleRequest {
-    @NotNull
-    @Size(min = 2, max = 20)
+    @NotNull(message = "title can't be null")
+    @Size(min = 2, max = 20, message = "title size (2-20)")
     private String tittle;
-    @NotNull
+    @NotNull(message = "content can't be null")
     private String content;
 }

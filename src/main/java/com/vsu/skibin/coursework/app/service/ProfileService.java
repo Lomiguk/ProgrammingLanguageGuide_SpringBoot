@@ -18,28 +18,37 @@ import java.util.Collection;
 @Service
 public class ProfileService {
     private final ProfileDAO profileDAO;
+    private final PasswordUtil passwordUtil;
 
     @Autowired
-    public ProfileService(ProfileDAO profileDAO) {
+    public ProfileService(ProfileDAO profileDAO, PasswordUtil passwordUtil) {
         this.profileDAO = profileDAO;
+        this.passwordUtil = passwordUtil;
     }
 
     public ProfileDTO signIn(String login, Long password) {
         return new ProfileDTO(profileDAO.signIn(login, password));
     }
 
-    public void signUp(String login, String email, String password, String passwordRepeat) throws SignUpException {
+    @Transactional
+    public ProfileDTO signUp(String login, String email, String password, String passwordRepeat) throws SignUpException, CouldNotFoundCreatedProfileException {
         if (password.equals(passwordRepeat)) {
-            profileDAO.signUp(login, email, PasswordUtil.getHash(password));
+            profileDAO.signUp(login, email, passwordUtil.getHash(password));
         } else {
             throw new SignUpException("Passwords don't match");
         }
+        // --
+        Profile createdProfile = profileDAO.getProfile(login);
+        if (createdProfile == null) {
+            throw new CouldNotFoundCreatedProfileException("Couldn't found created profile!");
+        }
+        return new ProfileDTO(createdProfile);
     }
 
     public Collection<ProfileDTO> getSubscribes(Long id) {
         Collection<Profile> profiles = profileDAO.getSubscribes(id);
         Collection<ProfileDTO> profileDTOs = new ArrayList<>();
-        for (Profile profile: profiles) {
+        for (Profile profile : profiles) {
             profileDTOs.add(new ProfileDTO(profile));
         }
         return profileDTOs;
@@ -48,16 +57,15 @@ public class ProfileService {
     public ProfileDTO getProfile(Long profileId) throws ReturnUnknownProfileException {
         try {
             return new ProfileDTO(profileDAO.getProfile(profileId));
-        }
-        catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new ReturnUnknownProfileException("Unknown profile");
         }
     }
 
     @Transactional
     public void changePassword(Long profileId, String oldPassword, String newPassword) throws WrongOldPasswordException {
-        if (profileDAO.checkPassword(profileId, PasswordUtil.getHash(oldPassword))) {
-            profileDAO.changePassword(profileId, PasswordUtil.getHash(newPassword));
+        if (profileDAO.checkPassword(profileId, passwordUtil.getHash(oldPassword))) {
+            profileDAO.changePassword(profileId, passwordUtil.getHash(newPassword));
         } else {
             throw new WrongOldPasswordException("The \"old password\" is not up-to-date");
         }
@@ -70,10 +78,11 @@ public class ProfileService {
     }
 
     @Transactional
-    public void subscribeToProfile(Long subscriberId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileIdException {
+    public Boolean subscribeToProfile(Long subscriberId, String authorLogin) throws SubscribeOnNonExistentProfile, WrongProfileIdException {
         try {
             Long authorId = profileDAO.getProfileId(authorLogin);
             profileDAO.subscribe(subscriberId, authorId);
+            return profileDAO.checkSubscribe(subscriberId, authorId);
         } catch (EmptyResultDataAccessException e) {
             throw new SubscribeOnNonExistentProfile("Trying to following a nun-existing profile");
         } catch (DataIntegrityViolationException e) {
@@ -93,7 +102,9 @@ public class ProfileService {
         }
     }
 
-    public int updateProfile(Long profileId, UpdateProfileRequest request) {
-        return profileDAO.updateProfile(profileId, request);
+    @Transactional
+    public ProfileDTO updateProfile(Long profileId, UpdateProfileRequest request) {
+        profileDAO.updateProfile(profileId, request);
+        return new ProfileDTO(profileDAO.getProfile(profileId));
     }
 }
