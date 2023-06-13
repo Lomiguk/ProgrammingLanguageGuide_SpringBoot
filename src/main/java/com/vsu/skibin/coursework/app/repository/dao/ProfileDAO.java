@@ -26,6 +26,8 @@ public class ProfileDAO {
     private final String SUBSCRIBE_QUERY = "INSERT INTO subscribe VALUES (?, ?, NOW());";
     private final String UNSUBSCRIBE_QUERY = "DELETE FROM subscribe WHERE subscriber_id = ? AND author_id = ?;";
     private final String UPDATE_PROFILE_QUERY = "UPDATE profile SET login=?, email=?, is_author=?, password=? WHERE id=?;";
+    private final String GET_PROFILE_BY_NAME_QUERY = "SELECT * FROM profile WHERE login = ? ORDER BY id LIMIT 1;";
+    private final String CHECK_SUBSCRIBE_QUERY = "SELECT COUNT(*) > 0 FROM subscribe WHERE subscriber_id = ? AND author_id = ?;";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -51,6 +53,10 @@ public class ProfileDAO {
 
     public Profile getProfile(Long profileId) {
         return jdbcTemplate.queryForObject(GET_PROFILE_QUERY, new ProfileRowMapper(), profileId);
+    }
+
+    public Profile getProfile(String login) {
+        return jdbcTemplate.queryForObject(GET_PROFILE_BY_NAME_QUERY, new ProfileRowMapper(), login);
     }
 
     public boolean checkPassword(Long profileId, Long oldPassword) {
@@ -81,11 +87,15 @@ public class ProfileDAO {
         jdbcTemplate.update(UNSUBSCRIBE_QUERY, profileId, authorId);
     }
 
-    public int updateProfile(Long profileId, UpdateProfileRequest request) {
-        return jdbcTemplate.update(UPDATE_PROFILE_QUERY, request.getLogin(),
+    public void updateProfile(Long profileId, UpdateProfileRequest request) {
+        jdbcTemplate.update(UPDATE_PROFILE_QUERY, request.getLogin(),
                 request.getEmail(),
                 request.getIsAuthor(),
                 request.getPassword(),
                 profileId);
+    }
+
+    public Boolean checkSubscribe(Long subscriberId, Long authorId) {
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(CHECK_SUBSCRIBE_QUERY, Boolean.class, subscriberId, authorId));
     }
 }

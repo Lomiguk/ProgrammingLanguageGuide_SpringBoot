@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 public class DoublePasswordRequest {
-    @NotNull
-    @Size(min = 5)
+    @NotNull(message = "password can't be null")
+    @Size(min = 5, message = "min password size - 5")
     String oldPassword;
-    @NotNull
-    @Size(min = 5)
+    @NotNull(message = "password can't be null")
+    @Size(min = 5, message = "min password size - 5")
     String newPassword;
 }

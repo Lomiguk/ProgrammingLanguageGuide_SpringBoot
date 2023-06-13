@@ -9,12 +9,12 @@ import java.sql.Timestamp;
 
 @Data
 public class AddArticleRequest {
-    @NotNull
-    @NotBlank
-    @Size(min = 2, max = 120)
+    @NotNull(message = "title can't be Null")
+    @NotBlank(message = "title can't be blank")
+    @Size(min = 2, max = 120, message = "title size (2 - 120)")
     private String title;
-    @NotNull
+    @NotNull(message = "date can't be null")
     private Timestamp date;
-    @NotNull
+    @NotNull(message = "content can't be null")
     private String content;
 }
