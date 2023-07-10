@@ -25,6 +25,7 @@ public class TagDAO {
     private final String GET_TAG_FROM_ARTICLE = "SELECT T.* FROM tag AS T JOIN article_tag AS AT ON T.id = AT.tag_id WHERE AT.article_id = ?";
     private final String GET_ALL_WITH_PAGINATION = "SELECT * FROM tag ORDER BY id LIMIT ? OFFSET ?;";
     private final String CHECK_TAG_ON_ARTICLE = "SELECT COUNT(*)>0 FROM article_tag WHERE article_id = ? AND tag_id = ?;";
+    private final String REMOVE_TAG_FROM_ARTICLE = "DELETE FROM article_tag WHERE tag_id = ?;";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -74,5 +75,9 @@ public class TagDAO {
 
     public Boolean checkTagOnArticle(Long articleId, Long id) {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(CHECK_TAG_ON_ARTICLE, Boolean.class, articleId, id));
+    }
+
+    public void getTagFromArticles(Long id) {
+        jdbcTemplate.update(REMOVE_TAG_FROM_ARTICLE, id);
     }
 }

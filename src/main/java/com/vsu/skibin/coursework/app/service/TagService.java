@@ -55,7 +55,9 @@ public class TagService {
         return new TagDTO(tag);
     }
 
+    @Transactional
     public int deleteTag(Long id) {
+        tagDAO.getTagFromArticles(id);
         return tagDAO.deleteTag(id);
     }
 

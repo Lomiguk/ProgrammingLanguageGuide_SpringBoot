@@ -8,6 +8,7 @@ import com.vsu.skibin.coursework.app.exception.exception.article.NotAuthorExcept
 import com.vsu.skibin.coursework.app.exception.exception.article.UnknownArticleException;
 import com.vsu.skibin.coursework.app.exception.exception.global.WrongIdValueException;
 import com.vsu.skibin.coursework.app.repository.dao.ArticleDAO;
+import com.vsu.skibin.coursework.app.repository.dao.CommentDAO;
 import com.vsu.skibin.coursework.app.repository.dao.ProfileDAO;
 import com.vsu.skibin.coursework.app.repository.dao.TagDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,14 @@ public class ArticleService {
     private final ArticleDAO articleDAO;
     private final TagDAO tagDAO;
     private final ProfileDAO profileDAO;
+    private final CommentDAO commentDAO;
 
     @Autowired
-    public ArticleService(ArticleDAO articleDAO, TagDAO tagDAO, ProfileDAO profileDAO) {
+    public ArticleService(ArticleDAO articleDAO, TagDAO tagDAO, ProfileDAO profileDAO, CommentDAO commentDAO) {
         this.articleDAO = articleDAO;
         this.tagDAO = tagDAO;
         this.profileDAO = profileDAO;
+        this.commentDAO = commentDAO;
     }
 
     public ArticleDTO getArticle(Long id) throws WrongIdValueException {
@@ -65,7 +68,10 @@ public class ArticleService {
         return new ArticleDTO(article);
     }
 
+    @Transactional
     public int deleteArticle(Long id) {
+        articleDAO.removeTagsFromArticle(id);
+        commentDAO.deleteByArticle(id);
         return articleDAO.deleteArticle(id);
     }
 

@@ -19,6 +19,7 @@ public class CommentDAO {
     private String PATCH_COMMENT_QUERY = "UPDATE comment SET content = ? WHERE id = ? AND article_id = ?;";
     private String DELETE_COMMENT_QUERY = "DELETE FROM comment WHERE id = ? AND article_id = ?;";
     private String GET_COMMENTS_BY_ARTICLE_QUERY = "SELECT * FROM comment WHERE article_id = ? ORDER BY post_date LIMIT ? OFFSET ?;";
+    private String DELETE_BY_ARTICLE_ID = "DELETE FROM comment WHERE article_id = ?";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -50,5 +51,9 @@ public class CommentDAO {
 
     public Collection<Comment> getComments(Long articleId, Integer limit, Integer offset) {
         return jdbcTemplate.query(GET_COMMENTS_BY_ARTICLE_QUERY, new CommentRowMapper(), articleId, limit, offset);
+    }
+
+    public void deleteByArticle(Long id) {
+        jdbcTemplate.update(DELETE_BY_ARTICLE_ID, id);
     }
 }
