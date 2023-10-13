@@ -45,12 +45,12 @@ public class ArticleController {
 
     @GetMapping("/tag/{tagId}")
     public ResponseEntity<Collection<ArticleDTO>> getArticlesByTagId(@PathVariable("tagId") Long id) {
-        return new ResponseEntity<>(articleService.getArticlesByTagId(id), HttpStatus.FOUND);
+        return new ResponseEntity<>(articleService.getArticlesByTagId(id), HttpStatus.OK);
     }
 
     @GetMapping("/tag/{tagName}")
     public ResponseEntity<Collection<ArticleDTO>> getArticlesByTagName(@PathVariable("tagName") String name) {
-        return new ResponseEntity<>(articleService.getArticlesByTagTitle(name), HttpStatus.FOUND);
+        return new ResponseEntity<>(articleService.getArticlesByTagTitle(name), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -64,7 +64,7 @@ public class ArticleController {
 
     @GetMapping("/{id}/tag")
     public ResponseEntity<Collection<TagDTO>> getTagsFromArticle(@PathVariable("id") Long articleId) {
-        return new ResponseEntity<>(tagService.getTagFromArticle(articleId), HttpStatus.FOUND);
+        return new ResponseEntity<>(tagService.getTagFromArticle(articleId), HttpStatus.OK);
     }
 
     @PostMapping("/{id}")

@@ -30,12 +30,12 @@ public class ProfileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProfileDTO> profiling(@PathVariable("id") Long profileId) throws ReturnUnknownProfileException {
-        return new ResponseEntity<>(profileService.getProfile(profileId), HttpStatus.FOUND);
+        return new ResponseEntity<>(profileService.getProfile(profileId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/subscription")
     public ResponseEntity<Collection<ProfileDTO>> getSubscription(@PathVariable("id") Long profileId) {
-        return new ResponseEntity<>(profileService.getSubscribes(profileId), HttpStatus.FOUND);
+        return new ResponseEntity<>(profileService.getSubscribes(profileId), HttpStatus.OK);
     }
 
     @PostMapping("/sign_in")
@@ -68,13 +68,13 @@ public class ProfileController {
 
     @PatchMapping("/{id}/author")
     public ResponseEntity<Boolean> becomeAnAuthor(@PathVariable("id") Long profileId) {
-        return new ResponseEntity<>(profileService.becomeAnAuthor(profileId), HttpStatus.FOUND);
+        return new ResponseEntity<>(profileService.becomeAnAuthor(profileId), HttpStatus.OK);
     }
 
     @PostMapping("/{id}/subscription")
     public ResponseEntity<Boolean> subscribe(@PathVariable("id") Long profileId,
                                              @RequestParam("author") String authorLogin) throws WrongProfileIdException, SubscribeOnNonExistentProfile {
-        return new ResponseEntity<>(profileService.subscribeToProfile(profileId, authorLogin), HttpStatus.FOUND);
+        return new ResponseEntity<>(profileService.subscribeToProfile(profileId, authorLogin), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/subscription")

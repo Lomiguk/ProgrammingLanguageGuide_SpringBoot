@@ -28,12 +28,12 @@ public class TagController {
     @GetMapping(value = {"", "/"})
     public ResponseEntity<Collection<TagDTO>> getAllTagsWithPagination(@RequestParam("limit") Integer limit,
                                                                        @RequestParam("offset") Integer offset) {
-        return new ResponseEntity<>(tagService.getAllTagsWithPagination(limit, offset), HttpStatus.FOUND);
+        return new ResponseEntity<>(tagService.getAllTagsWithPagination(limit, offset), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TagDTO> getTagInfo(@PathVariable Long id) throws FindTheTagException, WrongIdValueException {
-        return new ResponseEntity<>(tagService.getTagInfo(id), HttpStatus.FOUND);
+        return new ResponseEntity<>(tagService.getTagInfo(id), HttpStatus.OK);
     }
 
     @PostMapping(value = {"", "/"})
