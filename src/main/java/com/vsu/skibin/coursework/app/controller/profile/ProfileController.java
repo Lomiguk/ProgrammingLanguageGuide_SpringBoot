@@ -40,17 +40,26 @@ public class ProfileController {
 
     @PostMapping("/sign_in")
     public ResponseEntity<ProfileDTO> signIn(@Valid @RequestBody SignInRequest request) {
-        return new ResponseEntity<>(profileService.signIn(request.getLogin(),
-                passwordUtil.getHash(request.getPassword())),
-                HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(
+                profileService.signIn(
+                        request.getLogin(),
+                        passwordUtil.getHash(request.getPassword())
+                ),
+                HttpStatus.ACCEPTED
+        );
     }
 
     @PostMapping("/sign_up")
     public ResponseEntity<ProfileDTO> signUp(@Valid @RequestBody SignUpRequest request) throws SignUpException, CouldNotFoundCreatedProfileException {
-        return new ResponseEntity<>(profileService.signUp(request.getLogin(),
-                request.getEmail(),
-                request.getPassword(),
-                request.getPasswordRepeat()), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                profileService.signUp(
+                        request.getLogin(),
+                        request.getEmail(),
+                        request.getPassword(),
+                        request.getPasswordRepeat()
+                ),
+                HttpStatus.CREATED
+        );
     }
 
     @PatchMapping("/{id}/password")
